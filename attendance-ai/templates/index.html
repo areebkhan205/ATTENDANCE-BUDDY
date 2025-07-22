@@ -1,207 +1,341 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Attendance Buddy</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
-  <style>
-    * { box-sizing: border-box; }
-    html, body {
-      margin: 0; padding: 0;
-      font-family: 'Orbitron', sans-serif;
-      background-color: #000000;
-      overflow-x: hidden;
-    }
-    canvas#stars { position: fixed; top: 0; left: 0; z-index: 0; }
-    header {
-      text-align: center; margin-top: 40px;
-      position: relative; z-index: 2;
-    }
-    .logo {
-      font-size: 3rem;
-      background: linear-gradient(90deg, #4df3ff, #a08cff);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      text-shadow: 0 0 15px #4df3ff88;
-    }
-    .subtext {
-      color: #ccc; letter-spacing: 0.2em;
-      margin-bottom: 30px; font-size: 0.9rem;
-    }
-    .form-container {
-      background: rgba(25, 25, 35, 0.75);
-      border-radius: 12px; color: white;
-      box-shadow: 0 0 20px #6b78ff40;
-      width: 90%; max-width: 600px;
-      margin: 20px auto; position: relative; z-index: 2;
-      display: flex; flex-direction: column;
-      padding: 20px;
-    }
-    .section-title {
-      text-align: center; color: #4df3ff; font-size: 1.2rem;
-      margin: 10px 0; letter-spacing: 0.1em;
-    }
-    input, button {
-      padding: 10px; margin-top: 8px;
-      border-radius: 8px; border: 1px solid #333;
-      background: #111; color: white; font-size: 1rem;
-    }
-    button {
-      background: linear-gradient(90deg, #4df3ff, #a08cff);
-      font-weight: bold; cursor: pointer; margin-top: 12px;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-    button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 0 10px #a08cff80;
-    }
-    .result-message {
-      margin: 10px 0; background: rgba(255,255,255,0.1);
-      padding: 12px; border-radius: 8px; text-align: center;
-    }
-    .messages {
-      flex: 1; padding: 10px; overflow-y: auto; margin: 10px 0;
-      max-height: 200px;
-    }
-    .message {
-      margin-bottom: 8px; font-size: 0.95rem;
-      opacity: 0; animation: fadeIn 0.6s ease forwards;
-    }
-    .message.user { text-align: right; color: #4df3ff; }
-    .message.bot { text-align: left; color: #a08cff; }
-    @keyframes fadeIn { to { opacity: 1; } }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Attendance Buddy</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  height: 100%;
+  font-family: 'Orbitron', sans-serif;
+  background-color: #000;
+  display: flex;
+  flex-direction: column;
+}
+.wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 1;
+}
+canvas#stars {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+}
+header {
+  text-align: center;
+  margin-top: 40px;
+  z-index: 2;
+}
+.logo {
+  font-size: 3rem;
+  background: linear-gradient(90deg, #4df3ff, #a08cff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 15px #4df3ff88;
+}
+.subtext {
+  color: #ccc;
+  letter-spacing: 0.2em;
+  margin-bottom: 30px;
+  font-size: 0.9rem;
+}
+.form-container {
+  background: rgba(25, 25, 35, 0.75);
+  border-radius: 12px;
+  color: white;
+  box-shadow: 0 0 20px #6b78ff40;
+  width: 90%;
+  max-width: 600px;
+  margin: 20px auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  z-index: 2;
+}
+.section-title {
+  text-align: center;
+  color: #4df3ff;
+  font-size: 1.2rem;
+  margin: 10px 0;
+  letter-spacing: 0.1em;
+}
+input, button {
+  padding: 10px;
+  margin-top: 8px;
+  border-radius: 8px;
+  border: 1px solid #333;
+  background: #111;
+  color: white;
+  font-size: 1rem;
+}
+button {
+  background: linear-gradient(90deg, #4df3ff, #a08cff);
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 12px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 10px #a08cff80;
+}
+.result-message {
+  margin: 10px 0;
+  background: rgba(255,255,255,0.1);
+  padding: 12px;
+  border-radius: 8px;
+  text-align: center;
+}
+.messages {
+  flex: 1;
+  padding: 10px;
+  overflow-y: auto;
+  margin: 10px 0;
+  max-height: 200px;
+}
+.message {
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+  opacity: 0;
+  animation: fadeIn 0.6s ease forwards;
+}
+.message.user { text-align: right; color: #4df3ff; }
+.message.bot { text-align: left; color: #a08cff; }
+@keyframes fadeIn { to { opacity: 1; } }
+
+footer {
+  width: 100%;
+  position: relative;
+  color: #fff;
+  z-index: 2;
+}
+footer .gradient-bg {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(to bottom, transparent, rgba(128,0,128,0.2));
+}
+  footer .content {
+  position: relative;
+  backdrop-filter: blur(4px);
+  background-color: rgba(0,0,0,0.5);
+  border-top: 1px solid rgba(75, 85, 99, 0.5);
+  width: 100%;
+  padding: 40px 16px;
+  text-align: center;
+}
+
+
+.social-links {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  margin-bottom: 20px;
+}
+.social-links a {
+  position: relative;
+  display: inline-block;
+  padding: 12px;
+  background-color: rgba(31,41,55,0.5);
+  border: 1px solid rgba(75,85,99,0.5);
+  border-radius: 8px;
+  transition: transform 0.3s;
+}
+.social-links a:hover { transform: scale(1.1); }
+.social-links img { width: 24px; height: 24px; }
+.tooltip {
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%) translateY(8px);
+  background-color: #111827;
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.3s, transform 0.3s;
+}
+.social-links a:hover .tooltip {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+.made-with {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: #9ca3af;
+  margin-top: 10px;
+}
+.made-with img { width: 16px; height: 16px; transform: scale(1.08) rotate(6deg); }
+.copyright {
+  font-size: 13px;
+  color: #6b7280;
+  margin-top: 6px;
+}
+</style>
 </head>
 <body>
-
 <canvas id="stars"></canvas>
 
-<header>
-  <div class="subtext">SMART TOOLS FOR STUDENTS</div>
-  <div class="logo">Attendance Buddy</div>
-</header>
+<div class="wrapper">
+  <header>
+    <div class="subtext">SMART TOOLS FOR STUDENTS</div>
+    <div class="logo">Attendance Buddy</div>
+  </header>
 
-<div class="form-container">
-  <div class="section-title">📊 Check Your Attendance</div>
-  <form id="attendanceForm">
-    <input name="total_classes" type="number" required placeholder="Total number of classes" />
-    <input name="attended_classes" type="number" required placeholder="Number of classes you attended" />
-    <button type="submit">Calculate Attendance</button>
-  </form>
-  <div id="attendanceResult" class="result-message" style="display:none;"></div>
+  <div class="form-container">
+    <div class="section-title">📊 Check Your Attendance</div>
+    <form id="attendanceForm">
+      <input name="total_classes" type="number" required placeholder="Total number of classes" />
+      <input name="attended_classes" type="number" required placeholder="Number of classes you attended" />
+      <button type="submit">Calculate Attendance</button>
+    </form>
+    <div id="attendanceResult" class="result-message" style="display:none;"></div>
 
-  <div class="section-title">🤖 Chat with Attendance Buddy</div>
-  <div class="messages" id="messages"></div>
-  <form id="chatForm">
-    <input type="text" id="chatInput" placeholder="Type your question..." required>
-    <button type="submit">Send</button>
-  </form>
+    <div class="section-title">🤖 Chat with Attendance Buddy</div>
+    <div class="messages" id="messages"></div>
+    <form id="chatForm">
+      <input type="text" id="chatInput" placeholder="Type your question..." required>
+      <button type="submit">Send</button>
+    </form>
+  </div>
 </div>
 
+<footer id="contact">
+  <div class="gradient-bg"></div>
+  <div class="content">
+    <div class="social-links">
+      <a href="https://github.com/areebkhan205" target="_blank" rel="noopener noreferrer">
+        <img src="{{ url_for('static', filename='asset/github.png') }}" alt="Github">
+        <div class="tooltip">Github</div>
+      </a>
+      <a href="https://www.linkedin.com/in/areeb-khan-533754317?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" target="_blank" rel="noopener noreferrer">
+        <img src="{{ url_for('static', filename='asset/linkedin.png') }}" alt="LinkedIn">
+        <div class="tooltip">LinkedIn</div>
+      </a>
+      <a href="mailto:areeb.2854.com@gmail.com" target="_blank" rel="noopener noreferrer">
+        <img src="{{ url_for('static', filename='asset/mail-svgrepo-com.svg') }}" alt="Email">
+        <div class="tooltip">Email</div>
+      </a>
+    </div>
+    <div class="made-with">
+      <span>Made with</span>
+      <img src="{{ url_for('static', filename='asset/thunder-svgrepo-com.svg') }}" alt="Thunder Icon">
+      <span>by Areeb khan</span>
+    </div>
+    <p class="copyright">
+      © 2025<br>All rights reserved
+    </p>
+  </div>
+</footer>
+
 <script>
-  // Star animation
-  const canvas = document.getElementById('stars');
-  const ctx = canvas.getContext('2d');
-  let particles = [];
-  function resizeCanvas() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    generateParticles();
-  }
-  function generateParticles() {
-    particles = [];
-    const total = 120;
-    for (let i = 0; i < total; i++) {
-      particles.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        r: Math.random() * 1.4 + 0.5,
-        dx: (Math.random() - 0.5) * 0.2,
-        dy: (Math.random() - 0.5) * 0.2,
-        alpha: Math.random(),
-        delta: Math.random() * 0.01,
-        color: ['#4df3ff', '#a08cff', '#e0e0e0'][Math.floor(Math.random() * 3)]
-      });
-    }
-  }
-  function animateParticles() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    particles.forEach(p => {
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(${hexToRgb(p.color)}, ${p.alpha})`;
-      ctx.shadowBlur = 10; ctx.shadowColor = p.color;
-      ctx.fill();
-      p.x += p.dx; p.y += p.dy; p.alpha += p.delta;
-      if (p.alpha <= 0.3 || p.alpha >= 1) p.delta = -p.delta;
-      if (p.x < 0 || p.x > canvas.width) p.dx = -p.dx;
-      if (p.y < 0 || p.y > canvas.height) p.dy = -p.dy;
+// Star animation
+const canvas = document.getElementById('stars');
+const ctx = canvas.getContext('2d');
+let particles = [];
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  generateParticles();
+}
+function generateParticles() {
+  particles = [];
+  const total = 120;
+  for (let i = 0; i < total; i++) {
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      r: Math.random() * 1.4 + 0.5,
+      dx: (Math.random() - 0.5) * 0.2,
+      dy: (Math.random() - 0.5) * 0.2,
+      alpha: Math.random(),
+      delta: Math.random() * 0.01,
+      color: ['#4df3ff', '#a08cff', '#e0e0e0'][Math.floor(Math.random() * 3)]
     });
-    requestAnimationFrame(animateParticles);
   }
-  function hexToRgb(hex) {
-    const bigint = parseInt(hex.replace('#', ''), 16);
-    return `${(bigint >> 16) & 255}, ${(bigint >> 8) & 255}, ${bigint & 255}`;
-  }
-  window.addEventListener('resize', resizeCanvas);
-  resizeCanvas(); animateParticles();
-
-  // Attendance calculation
-  document.getElementById('attendanceForm').addEventListener('submit', e => {
-    e.preventDefault();
-    const total = parseInt(e.target.total_classes.value, 10);
-    const attended = parseInt(e.target.attended_classes.value, 10);
-    const percent = Math.round((attended / total) * 100);
-    let msg = `Attendance: ${percent}%.<br>`;
-    if (percent >= 75) {
-      msg += "✅ You are eligible for exams!";
-    } else {
-      const needed = Math.ceil((0.75 * total - attended) / (1 - 0.75));
-      msg += `❌ Not eligible. You need ${needed} more classes to reach 75%.`;
-    }
-    const resDiv = document.getElementById('attendanceResult');
-    resDiv.innerHTML = msg;
-    resDiv.style.display = 'block';
+}
+function animateParticles() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  particles.forEach(p => {
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(${hexToRgb(p.color)}, ${p.alpha})`;
+    ctx.shadowBlur = 10; ctx.shadowColor = p.color;
+    ctx.fill();
+    p.x += p.dx; p.y += p.dy; p.alpha += p.delta;
+    if (p.alpha <= 0.3 || p.alpha >= 1) p.delta = -p.delta;
+    if (p.x < 0 || p.x > canvas.width) p.dx = -p.dx;
+    if (p.y < 0 || p.y > canvas.height) p.dy = -p.dy;
   });
+  requestAnimationFrame(animateParticles);
+}
+function hexToRgb(hex) {
+  const bigint = parseInt(hex.replace('#', ''), 16);
+  return `${(bigint >> 16) & 255}, ${(bigint >> 8) & 255}, ${bigint & 255}`;
+}
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas(); animateParticles();
 
-  // Simple chat
-  const chatForm = document.getElementById('chatForm');
-  const chatInput = document.getElementById('chatInput');
-  const messages = document.getElementById('messages');
-
-  function addMessage(sender, text) {
-    const msg = document.createElement('div');
-    msg.className = 'message ' + sender;
-    msg.innerHTML = text;
-    messages.appendChild(msg);
-    messages.scrollTop = messages.scrollHeight;
+// Attendance calc
+document.getElementById('attendanceForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const total = parseInt(e.target.total_classes.value, 10);
+  const attended = parseInt(e.target.attended_classes.value, 10);
+  const percent = Math.round((attended / total) * 100);
+  let msg = `Attendance: ${percent}%.<br>`;
+  if (percent >= 75) {
+    msg += "✅ You are eligible for exams!";
+  } else {
+    const needed = Math.ceil((0.75 * total - attended) / (1 - 0.75));
+    msg += `❌ Not eligible. You need ${needed} more classes to reach 75%.`;
   }
+  const resDiv = document.getElementById('attendanceResult');
+  resDiv.innerHTML = msg;
+  resDiv.style.display = 'block';
+});
 
-  chatForm.addEventListener('submit', e => {
-    e.preventDefault();
-    const userMsg = chatInput.value.trim();
-    if (!userMsg) return;
-    addMessage('user', userMsg);
-    chatInput.value = '';
-
-    fetch('/chat', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: userMsg })
-    })
-    .then(response => response.json())
+// Simple chat
+const chatForm = document.getElementById('chatForm');
+const chatInput = document.getElementById('chatInput');
+const messages = document.getElementById('messages');
+function addMessage(sender, text) {
+  const msg = document.createElement('div');
+  msg.className = 'message ' + sender;
+  msg.innerHTML = text;
+  messages.appendChild(msg);
+  messages.scrollTop = messages.scrollHeight;
+}
+chatForm.addEventListener('submit', e => {
+  e.preventDefault();
+  const userMsg = chatInput.value.trim();
+  if (!userMsg) return;
+  addMessage('user', userMsg);
+  chatInput.value = '';
+  fetch('/chat', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ message: userMsg })
+  })
+  .then(response => response.json())
   .then(data => {
-  console.log('AI reply:', data);
-  const formatted = data.reply.replace(/\n/g, '<br>');
-  addMessage('bot', formatted);
-})
-    .catch(error => {
-      console.error('Error:', error);
-      addMessage('bot', "⚠️ Error: could not contact server.");
-    });
+    const formatted = data.reply.replace(/\n/g, '<br>');
+    addMessage('bot', formatted);
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    addMessage('bot', "⚠️ Error: could not contact server.");
   });
+});
 </script>
-
 </body>
 </html>
